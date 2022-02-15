@@ -1,18 +1,26 @@
 <template>
   <el-container class="home-container">
+
     <!-- 头部区域 -->
     <el-header>
+
       <div>
-        <img src="../assets/logo.png" alt="" />
-        <span>电商后台管理系统</span>
+        <img src="../img/尖刀对抗.jpeg" class="header-title-img">
+        <span style="font-size:20px" class="header-title-text">对抗仿真试验云端管控</span>
       </div>
-      <el-button type="info" @click="logout"> 退出 </el-button>
+      <el-avatar :size="50" :src="circleUrl" class="header-user-img" icon="el-icon-user-solid"></el-avatar>
+      <span class="header-user-text">FangSC</span>
+
+      <el-button type="info" @click="logout" class="header-logout"> 退出 </el-button>
     </el-header>
+
     <!-- 页面主体区域 -->
     <el-container>
       <!-- 侧边栏 -->
       <el-aside :width=" isCollapse ? '64px' :  '200px' ">
-        <div class="toggle-button" @click="toggleCollapse">|||</div>
+        <div class="toggle-button" @click="toggleCollapse">
+          <br>
+        </div>
         <el-menu
           background-color="#333744"
           text-color="#fff"
@@ -22,36 +30,207 @@
           router
           :default-active="activePath"
         >
-          <!-- 一级菜单 -->
-          <!-- for循环获取数据 -->
+
+          <!-- 一级菜单：虚拟资源管控 -->
           <el-submenu
-            :index="item.id + ''"
-            v-for="item in menulist"
-            :key="item.id"
+            :index="'1'"
+          >
+            <!-- 一级菜单的模板区域 -->
+            <template slot="title">
+              <!-- 图标 -->
+              <i class="el-icon-cloudy"></i>
+              <!-- 文本 -->
+              <span>虚拟资源管控</span>
+            </template>
+            <el-menu-item
+              :index="'/virtualResource'"
+              @click="saveNavState('/virtualResource')"
+            >
+              <!-- 二级菜单：虚拟资源 -->
+              <template slot="title">
+                <!-- 图标 -->
+                <i class="el-icon-coin"></i>
+                <!-- 文本 -->
+                <span>虚拟资源分析</span>
+              </template>
+            </el-menu-item>
+                        <el-menu-item
+              :index="'/openStack'"
+              @click="saveNavState('/openStack')"
+            >
+              <!-- 二级菜单：openstack -->
+              <template slot="title">
+                <!-- 图标 -->
+                <i class="el-icon-coin"></i>
+                <!-- 文本 -->
+                <span>openstack云管</span>
+              </template>
+            </el-menu-item>
+          </el-submenu>
+
+          <!-- 一级菜单 ：仿真资源管控-->
+          <el-submenu
+            :index="'2'"
+          >
+            <!-- 一级菜单的模板区域 -->
+            <template slot="title">
+              <!-- 图标 -->
+              <i class="el-icon-ship"></i>
+              <!-- 文本 -->
+              <span>仿真资源管控</span>
+            </template>
+            <el-menu-item
+              :index="'/fzMirrors'"
+              @click="saveNavState('/fzMirrors')"
+            >
+              <!-- 二级菜单的模板区域 -->
+              <template slot="title">
+                <!-- 图标 -->
+                <i class="el-icon-coin"></i>
+                <!-- 文本 -->
+                <span>仿真运行镜像资源</span>
+              </template>
+            </el-menu-item>
+                        <el-menu-item
+              :index="'/fzModels'"
+              @click="saveNavState('/fzModels')"
+            >
+              <!-- 二级菜单的模板区域 -->
+              <template slot="title">
+                <!-- 图标 -->
+                <i class="el-icon-coin"></i>
+                <!-- 文本 -->
+                <span>仿真模型资源</span>
+              </template>
+            </el-menu-item>
+                        <el-menu-item
+              :index="'/fzSoft'"
+              @click="saveNavState('/fzSoft')"
+            >
+              <!-- 二级菜单的模板区域 -->
+              <template slot="title">
+                <!-- 图标 -->
+                <i class="el-icon-coin"></i>
+                <!-- 文本 -->
+                <span>仿真支撑资源</span>
+              </template>
+            </el-menu-item>
+                        </el-menu-item>
+                        <el-menu-item
+              :index="'/fzData'"
+              @click="saveNavState('/fzData')"
+            >
+              <!-- 二级菜单的模板区域 -->
+              <template slot="title">
+                <!-- 图标 -->
+                <i class="el-icon-coin"></i>
+                <!-- 文本 -->
+                <span>仿真数据资源</span>
+              </template>
+            </el-menu-item>
+          </el-submenu>
+
+          <!-- 一级菜单：仿真任务管控 -->
+          <el-submenu
+            :index="'3'"
+          >
+            <!-- 一级菜单的模板区域 -->
+            <template slot="title">
+              <!-- 图标 -->
+              <i class="el-icon-mobile-phone"></i>
+              <!-- 文本 -->
+              <span>仿真任务管控</span>
+            </template>
+            <el-menu-item
+              :index="'fzTaskCreate'"
+              @click="saveNavState('/fzTaskCreate')"
+            >
+              <!-- 二级菜单的模板区域 -->
+              <template slot="title">
+                <!-- 图标 -->
+                <i class="el-icon-plus"></i>
+                <!-- 文本 -->
+                <span>仿真任务构建</span>
+              </template>
+            </el-menu-item>
+                        <el-menu-item
+              :index="'/fzTaskMonitor'"
+              @click="saveNavState('/fzTaskMonitor')"
+            >
+              <!-- 二级菜单的模板区域 -->
+              <template slot="title">
+                <!-- 图标 -->
+                <i class="el-icon-monitor"></i>
+                <!-- 文本 -->
+                <span>仿真任务监控</span>
+              </template>
+            </el-menu-item>
+          </el-submenu>
+          
+          <!-- 一级菜单 ：微服务管控-->
+          <el-submenu
+            :index="'4'"
           >
             <!-- 一级菜单的模板区域 -->
             <template slot="title">
               <!-- 图标 -->
               <i class="el-icon-location"></i>
               <!-- 文本 -->
-              <span>{{ item.authName }}</span>
+              <span>微服务管控</span>
             </template>
-
             <el-menu-item
-              :index="'/' + subItem.path"
-              v-for="subItem in item.children"
-              :key="subItem.id"
-              @click="saveNavState('/' + subItem.path)"
+              :index="'/microServiceList'"
+              @click="saveNavState('/microServiceList')"
             >
               <!-- 二级菜单的模板区域 -->
               <template slot="title">
                 <!-- 图标 -->
                 <i class="el-icon-location"></i>
                 <!-- 文本 -->
-                <span>{{ subItem.authName }}</span>
+                <span>微服务列表</span>
+              </template>
+            </el-menu-item>
+                        <el-menu-item
+              :index="'/microServiceData'"
+              @click="saveNavState('/microServiceData')"
+            >
+              <!-- 二级菜单的模板区域 -->
+              <template slot="title">
+                <!-- 图标 -->
+                <i class="el-icon-location"></i>
+                <!-- 文本 -->
+                <span>微服务节点分析</span>
               </template>
             </el-menu-item>
           </el-submenu>
+
+                    <!-- 一级菜单：用户管理 -->
+          <el-submenu
+            :index="'0'"
+          >
+            <!-- 一级菜单的模板区域 -->
+            <template slot="title">
+              <!-- 图标 -->
+              <i class="el-icon-user"></i>
+              <!-- 文本 -->
+              <span>用户管理</span>
+            </template>
+            <el-menu-item
+              :index="'/users'"
+              @click="saveNavState('/users')"
+            >
+              <!-- 二级菜单：用户列表 -->
+              <template slot="title">
+                <!-- 图标 -->
+                <i class="el-icon-user"></i>
+                <!-- 文本 -->
+                <span>用户列表</span>
+              </template>
+            </el-menu-item>
+          </el-submenu>
+
+          <!-- 一级菜单：仿真任务数据分析 -->
+
         </el-menu>
       </el-aside>
       <!-- 右侧内容主体 -->
@@ -66,20 +245,22 @@
 <script>
 export default {
   data() {
-      return {
-          //左侧菜单数据
-          menulist: [],
-          //是否折叠菜单
-          isCollapse: false,
-          //被激活的路由链接
-          activePath:''
-      }
+    return {
+      //左侧菜单数据
+      menulist: [],
+      //是否折叠菜单
+      isCollapse: false,
+      //被激活的路由链接
+      activePath: "",
+      //头像url
+      circleUrl: "../assets/logo.png",
+    };
   },
-//   生命周期函数
+  //   生命周期函数
   created() {
     //   获取菜单列表
-      this.getMenuList()
-      this.activePath = window.sessionStorage.getItem('activePath')
+    this.getMenuList();
+    this.activePath = window.sessionStorage.getItem("activePath");
   },
   methods: {
     logout() {
@@ -89,22 +270,21 @@ export default {
     },
     //获取所有的菜单
     async getMenuList() {
-        //获取menus地址的数据
-        const {data: res } = await this.$http.get('menus')
-        console.log(res);
-        if(res.meta.status != 200) return this.$message.error(res.meta.msg)
-        this.menulist = res.data
+      //获取menus地址的数据
+      const { data: res } = await this.$http.get("menus");
+      console.log(res);
+      if (res.meta.status != 200) return this.$message.error(res.meta.msg);
+      this.menulist = res.data;
     },
     //点击按钮，切换菜单的展开与折叠
     toggleCollapse() {
-        this.isCollapse = !this.isCollapse
+      this.isCollapse = !this.isCollapse;
     },
     // 保存路由链接的激活状态
     saveNavState(activePath) {
-        window.sessionStorage.setItem('activePath',activePath)
-        this.activePath = activePath
-    }
-
+      window.sessionStorage.setItem("activePath", activePath);
+      this.activePath = activePath;
+    },
   },
 };
 </script>
@@ -120,12 +300,13 @@ export default {
   padding-left: 0;
   align-items: center;
   color: #fff;
-  font-size: 20px;
+  font-size: 30px;
   div {
     display: flex;
     align-items: center;
     img {
       height: 40px;
+      border-radius: 10px;
     }
     span {
       margin-left: 15px;
@@ -149,11 +330,42 @@ export default {
 }
 
 .toggle-button {
-    background-color: #4a5064;
-    font-size: 10px;
-    line-height: 24px;
-    color: #fff;
-    text-align: center;
-    letter-spacing: 0.2em;
+  background-color: #4a5064;
+  font-size: 10px;
+  line-height: 24px;
+  color: #fff;
+  text-align: center;
+  letter-spacing: 0.2em;
+}
+
+.header-user-img {
+  float: right;
+  position: relative;
+  left: 53%;
+}
+
+.header-user-text {
+  font-size: 20px;
+  float: right;
+  position: relative;
+  left: 26%;
+}
+
+.header-title-img {
+  float: left;
+  position: relative;
+  left: 10%;
+}
+
+.header-title-text {
+  float: left;
+  position: relative;
+  left: 11%;
+}
+
+.header-logout {
+    float: right;
+  position: relative;
+  right: 1%;
 }
 </style>

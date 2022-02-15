@@ -30,7 +30,8 @@ import {
     Steps,
     Step,
     Tabs,
-    TabPane
+    TabPane,
+    Avatar
 } from 'element-ui'
 
 
@@ -63,5 +64,7 @@ Vue.use(Steps)
 Vue.use(Step)
 Vue.use(Tabs)
 Vue.use(TabPane)
+Vue.use(Avatar)
+
 Vue.prototype.$message = Message
 Vue.prototype.$confirm = MessageBox.confirm

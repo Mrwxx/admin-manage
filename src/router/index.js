@@ -4,9 +4,16 @@ import Login from '../components/Login.vue'
 import Home from '../components/Home.vue'
 import Welcome from '../components/Welcome.vue'
 import Users from '../components/users/Users.vue'
-import Rights from '../components/power/Rights.vue'
-import Roles from '../components/power/Roles.vue'
-import Add from '../components/goods/Add.vue'
+import OpenStack from '../components/virtual/OpenStack.vue'
+import VirtualResource from '../components/virtual/VirtualResource.vue'
+import FzMirrors from '../components/fzResource/FzMirrors.vue'
+import FzModels from '../components/fzResource/FzModels.vue'
+import FzSoft from '../components/fzResource/FzSoft.vue'
+import FzData from '../components/fzResource/FzData.vue'
+import FzTaskCreate from '../components/fzTask/FzTaskCreate.vue'
+import FzTaskMonitor from '../components/fzTask/FzTaskMonitor.vue'
+import MicroServiceList from '../components/microService/MicroServiceList.vue'
+import MicroServiceData from '../components/microService/MicroServiceData.vue'
 
 Vue.use(VueRouter)
 
@@ -36,16 +43,44 @@ const routes = [
         component: Users
       },
       {
-        path: '/rights',
-        component: Rights
+        path: '/openStack',
+        component: OpenStack
       },
       {
-        path: '/roles',
-        component: Roles
+        path: '/virtualResource',
+        component: VirtualResource
       },
       {
-        path: '/goods/add',
-        component: Add
+        path: '/fzMirrors',
+        component: FzMirrors
+      },
+      {
+        path: '/fzModels',
+        component: FzModels
+      },
+      {
+        path: '/fzSoft',
+        component: FzSoft
+      },
+      {
+        path: '/fzData',
+        component: FzData
+      },
+      {
+        path: '/fzTaskCreate',
+        component: FzTaskCreate
+      },
+      {
+        path: '/fzTaskMonitor',
+        component: FzTaskMonitor
+      },
+      {
+        path: '/microServiceList',
+        component: MicroServiceList
+      },
+      {
+        path: '/microServiceData',
+        component: MicroServiceData
       }
     ]
   }

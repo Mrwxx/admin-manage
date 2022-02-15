@@ -57,7 +57,7 @@ export default {
         //登录前的预验证
         login() {
             this.$refs.loginFormRef.validate(async valid => {
-                // console.log(valid);
+                console.log(valid);
                 if(!valid) return;
                 //获取data对象中的res
                 const { data: res} = await this.$http.post('login', this.loginForm);
