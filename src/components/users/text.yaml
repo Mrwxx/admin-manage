@@ -1,0 +1,40 @@
+#对象键值对
+name: xxx
+hash: { name: Steve, foo: bar } 
+#数组
+array:
+    - Cat
+    - Dog
+    - Goldfish
+array2: [Cat, Dog]
+array3:
+    -
+        - a
+        - b
+
+#符合结构
+languages:
+    - ruby
+    - [{name: perl,code: 2}]
+    - 
+        name: js
+        code: 3  
+
+#纯量
+parent: ~               
+isSet: true
+number: 12.30
+date: 1976-07-31
+
+#类型转换
+string: !!str 1
+int: !!int "2"
+bool: !!bool "true" 
+fn: !!js/function function(a,b){return a+b;}
+reg: !!js/regexp /test/
+undef: !!js/undefined '' 
+
+#引用
+defaults: &defaults
+  adapter:  postgres
+  host:     localhost

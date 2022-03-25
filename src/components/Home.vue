@@ -31,54 +31,66 @@
           :default-active="activePath"
         >
 
-          <!-- 一级菜单：虚拟资源管控 -->
+          <!-- 一级菜单：虚拟资源管控
+          <el-submenu
+            :index="'1'"
+          >
+            <!-- 一级菜单的模板区域 -->
+            <!-- <template slot="title"> -->
+              <!-- 图标 -->
+              <!-- <i class="el-icon-cloudy"></i> -->
+              <!-- 文本 -->
+              <!-- <span>虚拟资源管控</span> -->
+            <!-- </template> -->
+            <!-- <el-menu-item -->
+              <!-- :index="'/virtualResource'" -->
+              <!-- @click="saveNavState('/virtualResource')" -->
+            <!-- > -->
+              <!-- 二级菜单：虚拟资源 -->
+              <!-- <template slot="title"> -->
+                <!-- 图标 -->
+                <!-- <i class="el-icon-coin"></i> -->
+                <!-- 文本 -->
+                <!-- <span>虚拟资源分析</span> -->
+              <!-- </template> -->
+            <!-- </el-menu-item> -->
+                        <!-- <el-menu-item -->
+              <!-- :index="'/openStack'" -->
+              <!-- @click="saveNavState('/openStack')" -->
+            <!-- > -->
+              <!-- 二级菜单：openstack -->
+              <!-- <template slot="title"> -->
+                <!-- 图标 -->
+                <!-- <i class="el-icon-coin"></i> -->
+                <!-- 文本 -->
+                <!-- <span>openstack云管</span> -->
+              <!-- </template> -->
+            <!-- </el-menu-item> -->
+          <!-- </el-submenu> --> -->
+
+          <!-- 一级菜单 ：仿真资源管控-->
           <el-submenu
             :index="'1'"
           >
             <!-- 一级菜单的模板区域 -->
             <template slot="title">
               <!-- 图标 -->
-              <i class="el-icon-cloudy"></i>
-              <!-- 文本 -->
-              <span>虚拟资源管控</span>
-            </template>
-            <el-menu-item
-              :index="'/virtualResource'"
-              @click="saveNavState('/virtualResource')"
-            >
-              <!-- 二级菜单：虚拟资源 -->
-              <template slot="title">
-                <!-- 图标 -->
-                <i class="el-icon-coin"></i>
-                <!-- 文本 -->
-                <span>虚拟资源分析</span>
-              </template>
-            </el-menu-item>
-                        <el-menu-item
-              :index="'/openStack'"
-              @click="saveNavState('/openStack')"
-            >
-              <!-- 二级菜单：openstack -->
-              <template slot="title">
-                <!-- 图标 -->
-                <i class="el-icon-coin"></i>
-                <!-- 文本 -->
-                <span>openstack云管</span>
-              </template>
-            </el-menu-item>
-          </el-submenu>
-
-          <!-- 一级菜单 ：仿真资源管控-->
-          <el-submenu
-            :index="'2'"
-          >
-            <!-- 一级菜单的模板区域 -->
-            <template slot="title">
-              <!-- 图标 -->
               <i class="el-icon-ship"></i>
               <!-- 文本 -->
-              <span>仿真资源管控</span>
+              <span>仿真资源云端管理</span>
             </template>
+                        <el-menu-item
+              :index="'/fzVirtual'"
+              @click="saveNavState('/fzVirtual')"
+            >
+              <!-- 二级菜单的模板区域 -->
+              <template slot="title">
+                <!-- 图标 -->
+                <i class="el-icon-coin"></i>
+                <!-- 文本 -->
+                <span>虚拟资源</span>
+              </template>
+            </el-menu-item>
             <el-menu-item
               :index="'/fzMirrors'"
               @click="saveNavState('/fzMirrors')"
@@ -132,14 +144,14 @@
 
           <!-- 一级菜单：仿真任务管控 -->
           <el-submenu
-            :index="'3'"
+            :index="'2'"
           >
             <!-- 一级菜单的模板区域 -->
             <template slot="title">
               <!-- 图标 -->
               <i class="el-icon-mobile-phone"></i>
               <!-- 文本 -->
-              <span>仿真任务管控</span>
+              <span>仿真实验管控</span>
             </template>
             <el-menu-item
               :index="'fzTaskCreate'"
@@ -150,21 +162,10 @@
                 <!-- 图标 -->
                 <i class="el-icon-plus"></i>
                 <!-- 文本 -->
-                <span>仿真任务构建</span>
+                <span>仿真实验环境构建</span>
               </template>
             </el-menu-item>
-                        <el-menu-item
-              :index="'/fzTaskMonitor'"
-              @click="saveNavState('/fzTaskMonitor')"
-            >
-              <!-- 二级菜单的模板区域 -->
-              <template slot="title">
-                <!-- 图标 -->
-                <i class="el-icon-monitor"></i>
-                <!-- 文本 -->
-                <span>仿真任务监控</span>
-              </template>
-            </el-menu-item>
+
           </el-submenu>
           
           <!-- 一级菜单 ：微服务管控-->
@@ -176,32 +177,21 @@
               <!-- 图标 -->
               <i class="el-icon-location"></i>
               <!-- 文本 -->
-              <span>微服务管控</span>
+              <span>仿真资源异常监控</span>
             </template>
-            <el-menu-item
-              :index="'/microServiceList'"
-              @click="saveNavState('/microServiceList')"
+                                    <el-menu-item
+              :index="'/fzTaskMonitor'"
+              @click="saveNavState('/fzTaskMonitor')"
             >
               <!-- 二级菜单的模板区域 -->
               <template slot="title">
                 <!-- 图标 -->
-                <i class="el-icon-location"></i>
+                <i class="el-icon-monitor"></i>
                 <!-- 文本 -->
-                <span>微服务列表</span>
+                <span>仿真实验环境监控</span>
               </template>
             </el-menu-item>
-                        <el-menu-item
-              :index="'/microServiceData'"
-              @click="saveNavState('/microServiceData')"
-            >
-              <!-- 二级菜单的模板区域 -->
-              <template slot="title">
-                <!-- 图标 -->
-                <i class="el-icon-location"></i>
-                <!-- 文本 -->
-                <span>微服务节点分析</span>
-              </template>
-            </el-menu-item>
+          
           </el-submenu>
 
                     <!-- 一级菜单：用户管理 -->
@@ -364,7 +354,7 @@ export default {
 }
 
 .header-logout {
-    float: right;
+  float: right;
   position: relative;
   right: 1%;
 }

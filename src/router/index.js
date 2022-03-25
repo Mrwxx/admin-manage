@@ -4,8 +4,9 @@ import Login from '../components/Login.vue'
 import Home from '../components/Home.vue'
 import Welcome from '../components/Welcome.vue'
 import Users from '../components/users/Users.vue'
+// import Test from '../components/users/test.vue'
 import OpenStack from '../components/virtual/OpenStack.vue'
-import VirtualResource from '../components/virtual/VirtualResource.vue'
+import VirtualResource from '../components/fzResource/VirtualResource.vue'
 import FzMirrors from '../components/fzResource/FzMirrors.vue'
 import FzModels from '../components/fzResource/FzModels.vue'
 import FzSoft from '../components/fzResource/FzSoft.vue'
@@ -42,12 +43,16 @@ const routes = [
         path: '/users',
         component: Users
       },
+      // {
+      //   path: '/test',
+      //   component: Test
+      // },
       {
         path: '/openStack',
         component: OpenStack
       },
       {
-        path: '/virtualResource',
+        path: '/fzVirtual',
         component: VirtualResource
       },
       {
@@ -98,6 +103,10 @@ router.beforeEach((to,from,next) => {
   if(!tokenStr) return next('/login')
   next()
 })
+
+build: {
+  
+}
 
 
 export default router

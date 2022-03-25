@@ -3,8 +3,8 @@
     <!-- 面包屑导航区域 -->
     <el-breadcrumb separator-class="el-icon-arrow-right">
       <el-breadcrumb-item :to="{ path: '/home' }">首页</el-breadcrumb-item>
-      <el-breadcrumb-item>仿真任务管控</el-breadcrumb-item>
-      <el-breadcrumb-item>仿真任务监控</el-breadcrumb-item>
+      <el-breadcrumb-item>仿真资源异常监控</el-breadcrumb-item>
+      <el-breadcrumb-item>仿真实验环境监控</el-breadcrumb-item>
     </el-breadcrumb>
 
     <!-- 卡片视图 -->
@@ -12,90 +12,104 @@
       <el-row>
         <el-col :span="8">
           <div class="monitor-task-div">
-              <i class="el-icon-mobile-phone"></i>
-            仿真任务数
+            <i class="el-icon-mobile-phone"></i>
+            仿真实验数
             <br />
-            <span class="monitor-task-span">2</span>
+            <span class="monitor-task-span">{{ this.fzEnvNum }}</span>
           </div>
         </el-col>
         <el-col :span="8">
           <div class="monitor-point-div">
-              <i class="el-icon-monitor"></i>
+            <i class="el-icon-monitor"></i>
             仿真节点数
             <br />
-            <span class="monitor-point-span">6</span>
+            <span class="monitor-point-span">{{ this.fzPointNum }}</span>
           </div>
         </el-col>
         <el-col :span="8">
           <div class="monitor-data-div">
-              <i class="el-icon-document"></i>
+            <i class="el-icon-document"></i>
             仿真样本数
             <br />
-            <span class="monitor-data-span">2</span>
+            <span class="monitor-data-span">{{ this.fzFileNum }}</span>
           </div>
         </el-col>
       </el-row>
     </el-card>
 
-    <el-card class="point-card">
+    <el-card class="point-card" v-for="item in fzEnvBasic">
       <el-row>
-        <el-col :span="5">
+        <el-col :span="6">
           <el-button type="info" class="monitor-title-button">
             <div class="monitor-title-task">
-              
-              <span>仿真任务:BS-ENV1</span>
+              <span>仿真环境:</span>
+              <span>{{ item.fzEnvName }}</span>
               &nbsp;
-              <span>仿真样本:雷达探测想定测试1-2.xml</span>
+              <span>{{ item.fzFileName }}</span>
             </div>
           </el-button>
         </el-col>
 
-        <el-col :span="12">
+        <el-col :span="14">
           <div class="monitor-title-status">
             <span
-              >仿真周期(S):
-              <span class="monitor-larger">600</span>
-            </span>
-            &nbsp;&nbsp;&nbsp;&nbsp;
-            <span
-              >备份周期(S):
-              <span class="monitor-larger">500</span>
-            </span>
-            &nbsp;&nbsp;&nbsp;&nbsp;
-            <span
-              >仿真模型运行状态:
-              <span class="monitor-larger">正常</span>
-            </span>
-            &nbsp;&nbsp;&nbsp;&nbsp;
-            <span
               >仿真节点运行状态:
-              <span class="monitor-larger">正常</span>
+              <span class="monitor-larger">{{
+                item.fzPointStatus == "running" ? "正常" : "异常"
+              }}</span>
             </span>
             &nbsp;&nbsp;&nbsp;&nbsp;
             <span
-              >仿真任务网络状态:
-              <span class="monitor-larger">正常</span>
+              >仿真进程运行状态:
+              <span class="monitor-larger">{{
+                item.fzExeStatus == "running" ? "正常" : "异常"
+              }}</span>
+            </span>
+            &nbsp;&nbsp;&nbsp;&nbsp;
+            <span
+              >仿真环境网络状态:
+              <span class="monitor-larger">{{
+                item.fzNetStatus == "running" ? "正常" : "异常"
+              }}</span>
             </span>
           </div>
         </el-col>
 
-        <el-col :span="1" push="5">
-          <el-button type="primary">回滚仿真</el-button>
+        <el-col :span="1" :push="1">
+          <el-button
+            type="primary"
+            class="copyBtn"
+            @click="snapEnv(item.fzEnvName)"
+            >快照</el-button
+          >
         </el-col>
-        <el-col :span="1" push="5">
-          <el-button type="primary">终止仿真</el-button>
+        <el-col :span="1" :push="1">
+          <el-button
+            type="primary"
+            class="redoBtn"
+            @click="resumeEnv(item.fzEnvName)"
+            >恢复</el-button
+          >
+        </el-col>
+        <el-col :span="1" :push="1">
+          <el-button
+            type="primary"
+            class="stopBtn"
+            @click="freeEnv(item.fzEnvName)"
+            >终止</el-button
+          >
         </el-col>
       </el-row>
 
-      <el-row :gutter="100">
-        <el-col :span="6" >
+      <el-row :gutter="10">
+        <el-col :span="6" v-for="fzPoint in item.fzPoints">
           <el-card :body-style="{ padding: '0px' }">
             <el-row>
               <el-col :span="12">
                 <span class="monitor-img">
-                  <span> BS-MBMN-ENV1节点 </span>
+                  <span>{{ fzPoint.fzPointName }}</span>
                 </span>
-                <img src="../../img/单个目标模拟.png" class="image" />
+                <img :src="require('../../img/' + item.fzEnvName + '/' + fzPoint.fzPointName + '.png' )" class="image" />
                 <div style="padding: 14px">
                   <div class="bottom clearfix"></div>
                 </div>
@@ -105,35 +119,43 @@
                 <div>
                   <span class="monitor-img-text">
                     部署计算节点:
-                    <span class="monitor-large">C2</span>
+                    <span class="monitor-large">{{ fzPoint.computeNode }}</span>
                   </span>
                 </div>
                 <br />
                 <div>
                   <span class="monitor-img-text">
                     CPU:
-                    <span class="monitor-large"> 4核 </span>
+                    <span class="monitor-large">
+                      {{ fzPoint.cpuCores }}核
+                    </span>
                   </span>
                 </div>
                 <br />
                 <div>
                   <span class="monitor-img-text">
                     内存:
-                    <span class="monitor-large"> 4.00G </span>
+                    <span class="monitor-large">
+                      {{ (fzPoint.memSize / 1024.0) | numFilter }}GB
+                    </span>
                   </span>
                 </div>
                 <br />
                 <div>
                   <span class="monitor-img-text">
                     根磁盘:
-                    <span class="monitor-large"> 40.00G </span>
+                    <span class="monitor-large">
+                      {{ fzPoint.rootDisk | numFilter }}GB
+                    </span>
                   </span>
                 </div>
                 <br />
                 <div>
                   <span class="monitor-img-text">
                     挂载磁盘:
-                    <span class="monitor-large"> 100.00G </span>
+                    <span class="monitor-large">
+                      {{ fzPoint.mountDisk | numFilter }}GB
+                    </span>
                   </span>
                 </div>
               </el-col>
@@ -145,501 +167,33 @@
                 <br />
                 <div>
                   <span class="monitor-img-use monitor-img-use-arct">
-                    42.77%
+                    {{ fzPoint.cpuPer | numFilter }}%
                   </span>
                 </div>
                 <br />
                 <div>
                   <span class="monitor-img-use monitor-img-use-arct">
-                    44.60%
+                    {{ fzPoint.memPer | numFilter }}%
                   </span>
                 </div>
                 <br />
                 <div>
                   <span class="monitor-img-use monitor-img-use-arct">
-                    58.22%
+                    {{ fzPoint.rootDiskPer | numFilter }}%
                   </span>
                 </div>
                 <br />
                 <div>
                   <span class="monitor-img-use monitor-img-use-arct">
-                    16.02%
+                    {{ fzPoint.mountDiskPer | numFilter }}%
                   </span>
                 </div>
               </el-col>
             </el-row>
           </el-card>
         </el-col>
-        <el-col :span="6">
-          <el-card :body-style="{ padding: '0px' }">
-            <el-row>
-              <el-col :span="12">
-                <span class="monitor-img">
-                  <span> BS-CSJLD-ENV1节点 </span>
-                </span>
-                <img src="../../img/单个雷达模拟.png" class="image" />
-                <div style="padding: 14px">
-                  <div class="bottom clearfix"></div>
-                </div>
-              </el-col>
-
-              <el-col :span="8" class="monitor-img-text">
-                <div>
-                  <span class="monitor-img-text">
-                    部署计算节点:
-                    <span class="monitor-large">C1</span>
-                  </span>
-                </div>
-                <br />
-                <div>
-                  <span class="monitor-img-text">
-                    CPU:
-                    <span class="monitor-large"> 4核 </span>
-                  </span>
-                </div>
-                <br />
-                <div>
-                  <span class="monitor-img-text">
-                    内存:
-                    <span class="monitor-large"> 4.00G </span>
-                  </span>
-                </div>
-                <br />
-                <div>
-                  <span class="monitor-img-text">
-                    根磁盘:
-                    <span class="monitor-large"> 40.00G </span>
-                  </span>
-                </div>
-                <br />
-                <div>
-                  <span class="monitor-img-text">
-                    挂载磁盘:
-                    <span class="monitor-large"> 50.00G </span>
-                  </span>
-                </div>
-              </el-col>
-
-              <el-col :span="4" class="monitor-img-use">
-                <div>
-                  <div class="monitor-img-light"></div>
-                </div>
-                <br />
-                <div>
-                  <span class="monitor-img-use monitor-img-use-arct">
-                    33.78%
-                  </span>
-                </div>
-                <br />
-                <div>
-                  <span class="monitor-img-use monitor-img-use-arct">
-                    55.28%
-                  </span>
-                </div>
-                <br />
-                <div>
-                  <span class="monitor-img-use monitor-img-use-arct">
-                    43.76%
-                  </span>
-                </div>
-                <br />
-                <div>
-                  <span class="monitor-img-use monitor-img-use-arct">
-                    28.29%
-                  </span>
-                </div>
-              </el-col>
-            </el-row>
-          </el-card>
-        </el-col>
-
-        <el-col :span="6">
-          <el-card :body-style="{ padding: '0px' }">
-            <el-row>
-              <el-col :span="12">
-                <span class="monitor-img">
-                  <span> BS-LDXS-ENV1节点 </span>
-                </span>
-                <img src="../../img/单个雷达探测.png" class="image" />
-                <div style="padding: 14px">
-                  <div class="bottom clearfix"></div>
-                </div>
-              </el-col>
-
-              <el-col :span="8" class="monitor-img-text">
-                <div>
-                  <span class="monitor-img-text">
-                    部署计算节点:
-                    <span class="monitor-large">C3</span>
-                  </span>
-                </div>
-                <br />
-                <div>
-                  <span class="monitor-img-text">
-                    CPU:
-                    <span class="monitor-large"> 4核 </span>
-                  </span>
-                </div>
-                <br />
-                <div>
-                  <span class="monitor-img-text">
-                    内存:
-                    <span class="monitor-large"> 4.00G </span>
-                  </span>
-                </div>
-                <br />
-                <div>
-                  <span class="monitor-img-text">
-                    根磁盘:
-                    <span class="monitor-large"> 50.00G </span>
-                  </span>
-                </div>
-                <br />
-                <div>
-                  <span class="monitor-img-text">
-                    挂载磁盘:
-                    <span class="monitor-large"> 50.00G </span>
-                  </span>
-                </div>
-              </el-col>
-
-              <el-col :span="4" class="monitor-img-use">
-                <div>
-                  <div class="monitor-img-light"></div>
-                </div>
-                <br />
-                <div>
-                  <span class="monitor-img-use monitor-img-use-arct">
-                    67.15%
-                  </span>
-                </div>
-                <br />
-                <div>
-                  <span class="monitor-img-use monitor-img-use-arct">
-                    77.00%
-                  </span>
-                </div>
-                <br />
-                <div>
-                  <span class="monitor-img-use monitor-img-use-arct">
-                    33.15%
-                  </span>
-                </div>
-                <br />
-                <div>
-                  <span class="monitor-img-use monitor-img-use-arct">
-                    31.90%
-                  </span>
-                </div>
-              </el-col>
-            </el-row>
-          </el-card>
-        </el-col>
-
       </el-row>
     </el-card>
-
-    <el-card class="point-card">
-      <el-row>
-        <el-col :span="5">
-          <el-button type="info" class="monitor-title-button">
-            <div class="monitor-title-task">
-              <span>仿真任务:BS-ENV2</span>
-              &nbsp;
-              <span>仿真样本:雷达探测想定测试1-1.xml</span>
-            </div>
-          </el-button>
-        </el-col>
-
-        <el-col :span="12">
-          <div class="monitor-title-status">
-            <span
-              >仿真周期(S):
-              <span class="monitor-larger">1300</span>
-            </span>
-            &nbsp;&nbsp;&nbsp;&nbsp;
-            <span
-              >备份周期(S):
-              <span class="monitor-larger">1000</span>
-            </span>
-            &nbsp;&nbsp;&nbsp;&nbsp;
-            <span
-              >仿真模型运行状态:
-              <span class="monitor-larger">正常</span>
-            </span>
-            &nbsp;&nbsp;&nbsp;&nbsp;
-            <span
-              >仿真节点运行状态:
-              <span class="monitor-larger">正常</span>
-            </span>
-            &nbsp;&nbsp;&nbsp;&nbsp;
-            <span
-              >仿真任务网络状态:
-              <span class="monitor-larger">正常</span>
-            </span>
-          </div>
-        </el-col>
-
-        <el-col :span="1" push="5">
-          <el-button type="primary">回滚仿真</el-button>
-        </el-col>
-        <el-col :span="1" push="5">
-          <el-button type="primary">终止仿真</el-button>
-        </el-col>
-      </el-row>
-
-      <el-row :gutter="100">
-        <el-col :span="6">
-          <el-card :body-style="{ padding: '0px' }">
-            <el-row>
-              <el-col :span="12">
-                <span class="monitor-img">
-                  <span> BS-LDXS-ENV2节点 </span>
-                </span>
-                <img src="../../img/雷达探测-2.png" class="image" />
-                <div style="padding: 14px">
-                  <div class="bottom clearfix"></div>
-                </div>
-              </el-col>
-
-              <el-col :span="8" class="monitor-img-text">
-                <div>
-                  <span class="monitor-img-text">
-                    部署计算节点:
-                    <span class="monitor-large">C3</span>
-                  </span>
-                </div>
-                <br />
-                <div>
-                  <span class="monitor-img-text">
-                    CPU:
-                    <span class="monitor-large"> 4核 </span>
-                  </span>
-                </div>
-                <br />
-                <div>
-                  <span class="monitor-img-text">
-                    内存:
-                    <span class="monitor-large"> 4.00G </span>
-                  </span>
-                </div>
-                <br />
-                <div>
-                  <span class="monitor-img-text">
-                    根磁盘:
-                    <span class="monitor-large"> 50.00G </span>
-                  </span>
-                </div>
-                <br />
-                <div>
-                  <span class="monitor-img-text">
-                    挂载磁盘:
-                    <span class="monitor-large"> 50.00G </span>
-                  </span>
-                </div>
-              </el-col>
-
-              <el-col :span="4" class="monitor-img-use">
-                <div>
-                  <div class="monitor-img-light"></div>
-                </div>
-                <br />
-                <div>
-                  <span class="monitor-img-use monitor-img-use-arct">
-                    22.39%
-                  </span>
-                </div>
-                <br />
-                <div>
-                  <span class="monitor-img-use monitor-img-use-arct">
-                    58.12%
-                  </span>
-                </div>
-                <br />
-                <div>
-                  <span class="monitor-img-use monitor-img-use-arct">
-                    38.40%
-                  </span>
-                </div>
-                <br />
-                <div>
-                  <span class="monitor-img-use monitor-img-use-arct">
-                    21.00%
-                  </span>
-                </div>
-              </el-col>
-            </el-row>
-          </el-card>
-        </el-col>
-        <el-col :span="6">
-          <el-card :body-style="{ padding: '0px' }">
-            <el-row>
-              <el-col :span="12">
-                <span class="monitor-img">
-                  <span> BS-CSJLD-ENV2节点 </span>
-                </span>
-                <img src="../../img/雷达模拟-2.png" class="image" />
-                <div style="padding: 14px">
-                  <div class="bottom clearfix"></div>
-                </div>
-              </el-col>
-
-              <el-col :span="8" class="monitor-img-text">
-                <div>
-                  <span class="monitor-img-text">
-                    部署计算节点:
-                    <span class="monitor-large">C2</span>
-                  </span>
-                </div>
-                <br />
-                <div>
-                  <span class="monitor-img-text">
-                    CPU:
-                    <span class="monitor-large"> 4核 </span>
-                  </span>
-                </div>
-                <br />
-                <div>
-                  <span class="monitor-img-text">
-                    内存:
-                    <span class="monitor-large"> 4.00G </span>
-                  </span>
-                </div>
-                <br />
-                <div>
-                  <span class="monitor-img-text">
-                    根磁盘:
-                    <span class="monitor-large"> 30.00G </span>
-                  </span>
-                </div>
-                <br />
-                <div>
-                  <span class="monitor-img-text">
-                    挂载磁盘:
-                    <span class="monitor-large"> 50.00G </span>
-                  </span>
-                </div>
-              </el-col>
-
-              <el-col :span="4" class="monitor-img-use">
-                <div>
-                  <div class="monitor-img-light"></div>
-                </div>
-                <br />
-                <div>
-                  <span class="monitor-img-use monitor-img-use-arct">
-                    19.35%
-                  </span>
-                </div>
-                <br />
-                <div>
-                  <span class="monitor-img-use monitor-img-use-arct">
-                    68.90%
-                  </span>
-                </div>
-                <br />
-                <div>
-                  <span class="monitor-img-use monitor-img-use-arct">
-                    22.10%
-                  </span>
-                </div>
-                <br />
-                <div>
-                  <span class="monitor-img-use monitor-img-use-arct">
-                    25.00%
-                  </span>
-                </div>
-              </el-col>
-            </el-row>
-          </el-card>
-        </el-col>
-
-        <el-col :span="6">
-          <el-card :body-style="{ padding: '0px' }">
-            <el-row>
-              <el-col :span="12">
-                <span class="monitor-img">
-                  <span> BS-LDXS-ENV2节点 </span>
-                </span>
-                <img src="../../img/目标模拟-2.png" class="image" />
-                <div style="padding: 14px">
-                  <div class="bottom clearfix"></div>
-                </div>
-              </el-col>
-
-              <el-col :span="8" class="monitor-img-text">
-                <div>
-                  <span class="monitor-img-text">
-                    部署计算节点:
-                    <span class="monitor-large">C3</span>
-                  </span>
-                </div>
-                <br />
-                <div>
-                  <span class="monitor-img-text">
-                    CPU:
-                    <span class="monitor-large"> 4核 </span>
-                  </span>
-                </div>
-                <br />
-                <div>
-                  <span class="monitor-img-text">
-                    内存:
-                    <span class="monitor-large"> 4.00G </span>
-                  </span>
-                </div>
-                <br />
-                <div>
-                  <span class="monitor-img-text">
-                    根磁盘:
-                    <span class="monitor-large"> 40.00G </span>
-                  </span>
-                </div>
-                <br />
-                <div>
-                  <span class="monitor-img-text">
-                    挂载磁盘:
-                    <span class="monitor-large"> 100.00G </span>
-                  </span>
-                </div>
-              </el-col>
-
-              <el-col :span="4" class="monitor-img-use">
-                <div>
-                  <div class="monitor-img-light"></div>
-                </div>
-                <br />
-                <div>
-                  <span class="monitor-img-use monitor-img-use-arct">
-                    51.12%
-                  </span>
-                </div>
-                <br />
-                <div>
-                  <span class="monitor-img-use monitor-img-use-arct">
-                    66.90%
-                  </span>
-                </div>
-                <br />
-                <div>
-                  <span class="monitor-img-use monitor-img-use-arct">
-                    55.00%
-                  </span>
-                </div>
-                <br />
-                <div>
-                  <span class="monitor-img-use monitor-img-use-arct">
-                    21.00%
-                  </span>
-                </div>
-              </el-col>
-            </el-row>
-          </el-card>
-        </el-col>
-
-      </el-row>
-    </el-card>
-
   </div>
 </template>
 
@@ -650,28 +204,135 @@ import * as echarts from "echarts";
 export default {
   data() {
     return {
-      rightsList: [],
-      pointList: [
-        "BS-CSJLD-ENV1",
-        "BS-LDTC-ENV1",
-        "BS-CSJLD-ENV1",
-        "BS-CSJLD-ENV1",
-      ],
+      //实验总体信息
+      fzEnvNum: 0,
+      fzPointNum: 0,
+      fzFileNum: 0,
+
+      //实验基本信息
+      fzEnvBasic: [],
     };
   },
   created() {
-    //获取所有的权限
-    // this.getRightsList();
+    this.getEnvTotal();
+    this.getEnvBasic();
   },
   methods: {
-    //获取权限列表
-    async getRightsList() {
-      const { data: res } = await this.$http.get("rights/list");
-      if (res.meta.status != 200) {
-        return this.$message.error("获取权限列表失败！");
-      }
-      this.rightsList = res.data;
-      console.log(this.rightsList);
+    getEnvTotal() {
+      let self = this;
+      this.$http.get("/vueCon/fzEnvTotal").then((res) => {
+        console.log(res);
+        self.fzEnvNum = res.data.data.fzEnvNum;
+        self.fzPointNum = res.data.data.fzPointNum;
+        self.fzFileNum = res.data.data.fzFileNum;
+      });
+    },
+
+    getEnvBasic() {
+      let self = this;
+      this.$http.get("/vueCon/fzEnvBasic").then((res) => {
+        console.log(res);
+        self.fzEnvBasic = res.data.data;
+      });
+    },
+
+    snapEnv(val) {
+      console.log(val);
+      this.$confirm("即将对仿真实验环境执行快照,是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
+        .then(() => {
+          this.$http.get("/vueCon/fzEnvSnap", val).then((res) => {
+            console.log(res);
+            if (res.data.status == 200) {
+              this.$message({
+                type: "success",
+                message: "请求快照成功!请等待快照结果...",
+              });
+            } else {
+              this.$message({
+                type: "error",
+                message: "请求快照失败!请重试...",
+              });
+            }
+          });
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消快照！",
+          });
+        });
+    },
+
+    resumeEnv(val) {
+      console.log(val);
+      this.$confirm("即将对仿真实验环境执行恢复,是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
+        .then(() => {
+          this.$http.get("/vueCon/fzEnvResume", val).then((res) => {
+            console.log(res);
+            if (res.data.status == 200) {
+              this.$message({
+                type: "success",
+                message: "请求恢复成功!请等待恢复结果...",
+              });
+            } else {
+              this.$message({
+                type: "error",
+                message: "请求恢复失败!请重试...",
+              });
+            }
+          });
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消恢复！",
+          });
+        });
+    },
+
+    freeEnv(val) {
+      console.log(val);
+      this.$confirm("即将对仿真实验环境执行释放,是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
+        .then(() => {
+          this.$http.get("/vueCon/fzEnvFree", val).then((res) => {
+            console.log(res);
+            if (res.data.status == 200) {
+              this.$message({
+                type: "success",
+                message: "请求释放成功!请等待释放结果...",
+              });
+            } else {
+              this.$message({
+                type: "error",
+                message: "请求释放失败!请重试...",
+              });
+            }
+          });
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消释放！",
+          });
+        });
+    },
+  },
+  filters: {
+    numFilter(value) {
+      let realVal = parseFloat(value).toFixed(2);
+      return realVal;
     },
   },
 };
@@ -734,7 +395,7 @@ export default {
 
 .head-card {
   height: 200px;
-    position: relative;
+  position: relative;
   left: 2%;
   top: 10px;
   width: 96%;
@@ -781,7 +442,7 @@ export default {
   font-size: 20px;
   cursor: pointer;
   padding: 8px 12px;
-  left: 40px;
+  left: 20px;
   top: 10px;
 }
 
@@ -821,7 +482,7 @@ export default {
 
 .monitor-title-button {
   height: 40px;
-  width: 550px;
+  width: 500px;
   position: relative;
   font-size: 20px;
   cursor: pointer;
@@ -869,5 +530,22 @@ export default {
 .el-row {
   margin-top: 20px;
   margin-bottom: 10px;
+}
+.redoBtn {
+  float: right;
+  position: inherit;
+  right: 15px;
+}
+
+.stopBtn {
+  float: right;
+  position: inherit;
+  right: 0px;
+}
+
+.copyBtn {
+  float: right;
+  position: inherit;
+  right: 30px;
 }
 </style>

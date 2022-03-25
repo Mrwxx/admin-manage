@@ -31,7 +31,16 @@ import {
     Step,
     Tabs,
     TabPane,
-    Avatar
+    Avatar,
+    Transfer,
+    Select,
+    Option,
+    Radio,
+    RadioGroup,
+    InputNumber,
+    Upload,
+    Checkbox,
+    CheckboxGroup
 } from 'element-ui'
 
 
@@ -65,6 +74,15 @@ Vue.use(Step)
 Vue.use(Tabs)
 Vue.use(TabPane)
 Vue.use(Avatar)
+Vue.use(Transfer)
+Vue.use(Select)
+Vue.use(Option)
+Vue.use(Radio)
+Vue.use(RadioGroup)
+Vue.use(InputNumber)
+Vue.use(Upload)
+Vue.use(Checkbox)
+Vue.use(CheckboxGroup)
 
 Vue.prototype.$message = Message
 Vue.prototype.$confirm = MessageBox.confirm

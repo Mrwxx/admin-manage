@@ -3,8 +3,8 @@
     <!-- 面包屑导航区域 -->
     <el-breadcrumb separator-class="el-icon-arrow-right">
       <el-breadcrumb-item :to="{ path: '/home' }">首页</el-breadcrumb-item>
-      <el-breadcrumb-item>虚拟资源管控</el-breadcrumb-item>
-      <el-breadcrumb-item>虚拟资源分析</el-breadcrumb-item>
+      <el-breadcrumb-item>仿真资源管理</el-breadcrumb-item>
+      <el-breadcrumb-item>虚拟资源</el-breadcrumb-item>
     </el-breadcrumb>
     <!-- 卡片视图 -->
     <el-card>
@@ -48,16 +48,16 @@
         <el-table-column label="节点名称" prop="pointName"></el-table-column>
         <el-table-column label="节点类型" prop="pointType"></el-table-column>
         <el-table-column label="CPU类型" prop="cpuType"></el-table-column>
-        <el-table-column label="CPU核心数" prop="cpuCore"></el-table-column>
-        <el-table-column label="内存大小" prop="memNum"></el-table-column>
-        <el-table-column label="磁盘存储" prop="hardNum"></el-table-column>
-        <el-table-column label="显卡类型" prop="mediaType"></el-table-column>
-        <el-table-column label="显卡内存" prop="mediaNum"></el-table-column>
-        <el-table-column label="节点位置" prop="pointAt"></el-table-column>
+        <el-table-column label="CPU核心数" prop="cpuCores"></el-table-column>
+        <el-table-column label="内存大小(GB)" prop="memNum"></el-table-column>
+        <el-table-column label="磁盘存储(TB)" prop="diskNum"></el-table-column>
+        <!-- <el-table-column label="显卡类型" prop="mediaType"></el-table-column>
+        <el-table-column label="显卡内存" prop="mediaNum"></el-table-column> -->
+        <el-table-column label="节点位置" prop="pointPos"></el-table-column>
         <el-table-column label="节点状态" prop="pointStatus"></el-table-column>
         <!-- <el-table-column label="节点操作" prop="pointCommand"></el-table-column> -->
 
-        <el-table-column label="操作" width="300px">
+        <!-- <el-table-column label="操作" width="300px">
           <template slot-scope="scope">
             <el-button size="mini" type="danger" icon="el-icon-download"
               >下线</el-button
@@ -66,7 +66,7 @@
               >配置</el-button
             >
           </template>
-        </el-table-column>
+        </el-table-column> -->
       </el-table>
     </el-card>
   </div>
@@ -80,95 +80,88 @@ export default {
   data() {
     return {
       //所有角色列表数据
-      roleList: [],
-      //所有openstack节点列表数据
+      roleList: [
+
+      ],
       pointList: [
         {
-          pointName: "ct",
-          pointType: "控制节点",
-          cpuType: "E5-2660 C2（双路）",
-          cpuCore: "16核",
-          memNum: "64G",
-          hardNum: "2TB",
-          mediaType: "GTX 1050ti",
-          mediaNum: "4G",
-          pointAt: "北京",
-          pointStatus: "已激活",
-        },
-        {
-          pointName: "c1",
-          pointType: "计算节点/存储节点",
-          cpuType: "E5-2660 C2（双路）",
-          cpuCore: "16核",
-          memNum: "64G",
-          hardNum: "1TB",
-          mediaType: "GTX 1050ti",
-          mediaNum: "4G",
-          pointAt: "北京",
-          pointStatus: "已激活",
-        },
-        {
-          pointName: "c2",
-          pointType: "计算节点/存储节点",
-          cpuType: "E5-2670 C2（单路）",
-          cpuCore: "8核",
-          memNum: "32G",
-          hardNum: "2TB",
-          mediaType: "GTX 1050ti",
-          mediaNum: "4G",
-          pointAt: "北京",
-          pointStatus: "已激活",
-        },
-        {
-          pointName: "c3",
-          pointType: "计算节点/存储节点",
-          cpuType: "E5-2670 C2（双路）",
-          cpuCore: "16核",
-          memNum: "64G",
-          hardNum: "2TB",
-          mediaType: "GTX 1060",
-          mediaNum: "6G",
-          pointAt: "北京",
-          pointStatus: "已激活",
+          pointName: "",
+          pointType: "",
+          cpuType: "",
+          cpuCores: "",
+          diskNum: "",
+          pointPos: "",
+          pointStatus: "",
         },
       ],
+      cpu: {
+        totalSour:"",
+        usedSour:"",
+        freeSour:""
+      },
+      mem: {
+        totalSour:"",
+        usedSour:"",
+        freeSour:""
+      },
+      disk: {
+        totalSour:"",
+        usedSour:"",
+        freeSour:""
+      },
+      network: {
+        totalSour:"",
+        usedSour:"",
+        freeSour:""
+      }
     };
   },
   created() {
-    this.getRoleList();
-  },
-  mounted() {
     this.getVirtualRes();
   },
-  methods: {
-    //获取所有角色的列表
-    async getRoleList() {
-      const { data: res } = await this.$http.get("roles");
-      if (res.meta.status != 200) {
-        return this.$message.error("获取角色列表失败！");
-      }
+  mounted() {
 
-      this.roleList = res.data;
-    },
-    goAddpage() {
-      this.$router.push("/goods/add");
-    },
+    this.getOpenStackInfo();
+  },
+  methods: {
     //显示虚拟资源池
     getVirtualRes() {
-      //3.基于准备好的DOM，初始化Echarts实例
+      let self = this;
+      //获取虚拟资源信息
+      this.$http.get('/vueCon/cpuInfo')
+      .then((res) =>
+      {
+        console.log(res);
+        self.cpu = res.data.data;
+        this.drawCpu();
+      });
+
+      this.$http.get('/vueCon/memInfo')
+      .then((res) =>
+      {
+        self.mem = res.data.data;
+        this.drawMem();
+      });
+
+      this.$http.get('/vueCon/diskInfo')
+      .then((res) =>
+      {
+        self.disk = res.data.data;
+        this.drawDisk();
+      });
+
+      this.$http.get('/vueCon/networkInfo')
+      .then((res) =>
+      {
+        self.network = res.data.data;
+        this.drawNetwork();
+      });
+
+    },
+
+    drawCpu(){
       var cpuChart = echarts.init(document.getElementById("cpu"));
-      var memChart = echarts.init(document.getElementById("mem"));
-      var hardChart = echarts.init(document.getElementById("hard"));
-      var networkChart = echarts.init(document.getElementById("network"));
       var cpuInfo = {
-        // title: {
-        //   text: "公里总里程",
-        //   x: "center",
-        //   textStyle: {
-        //     color: "#FFFFFF",
-        //     fontSize: 25,
-        //   },
-        // },
         title: {
           text: "CPU使用情况",
           //   subtext: "aaa",
@@ -180,7 +173,7 @@ export default {
             type: "pie",
             data: [
               {
-                value: 32,
+                value: this.cpu.usedSour,
                 name: "CPU已使用核心数",
                 itemStyle: {
                   normal: {
@@ -189,7 +182,7 @@ export default {
                 },
               },
               {
-                value: 24,
+                value: this.cpu.freeSour,
                 name: "剩余CPU核心数",
                 itemStyle: {
                   normal: {
@@ -215,6 +208,12 @@ export default {
           },
         ],
       };
+      
+      cpuChart.setOption(cpuInfo);
+    },
+
+    drawMem(){
+      var memChart = echarts.init(document.getElementById("mem"));
       var memInfo = {
         title: {
           text: "内存使用情况",
@@ -227,7 +226,7 @@ export default {
             type: "pie",
             data: [
               {
-                value: 32,
+                value: this.mem.usedSour,
                 name: "已使用内存量",
                 itemStyle: {
                   normal: {
@@ -236,7 +235,7 @@ export default {
                 },
               },
               {
-                value: 192,
+                value: this.mem.freeSour,
                 name: "剩余内存总量",
               },
             ],
@@ -257,6 +256,11 @@ export default {
           },
         ],
       };
+      memChart.setOption(memInfo);
+    },
+
+    drawDisk(){
+      var hardChart = echarts.init(document.getElementById("hard"));
       var hardInfo = {
         title: {
           text: "磁盘使用情况",
@@ -269,7 +273,7 @@ export default {
             type: "pie",
             data: [
               {
-                value: 820,
+                value: this.disk.usedSour,
                 name: "已使用磁盘存储",
                 itemStyle: {
                   normal: {
@@ -278,7 +282,7 @@ export default {
                 },
               },
               {
-                value: 6348,
+                value: this.disk.freeSour,
                 name: "剩余磁盘存储",
               },
             ],
@@ -299,7 +303,12 @@ export default {
           },
         ],
       };
-      var networkInfo = {
+      hardChart.setOption(hardInfo);
+    },
+
+    drawNetwork(){
+      var networkChart = echarts.init(document.getElementById("network"));
+            var networkInfo = {
         title: {
           text: "网络使用情况",
           //   subtext: "aaa",
@@ -311,7 +320,7 @@ export default {
             type: "pie",
             data: [
               {
-                value: 1,
+                value: this.network.usedSour,
                 name: "已使用二层网络",
                 itemStyle: {
                   normal: {
@@ -320,7 +329,7 @@ export default {
                 },
               },
               {
-                value: 1,
+                value: this.network.freeSour,
                 name: "剩余二层网络",
               },
             ],
@@ -341,11 +350,18 @@ export default {
           },
         ],
       };
-      cpuChart.setOption(cpuInfo);
-      memChart.setOption(memInfo);
-      hardChart.setOption(hardInfo);
       networkChart.setOption(networkInfo);
     },
+
+    getOpenStackInfo(){
+      this.$http.get('/vueCon/openstackPoint')
+      .then((res) =>
+      {
+        console.log(res);
+        this.pointList = res.data.data;
+        console.log(this.pointList);
+      });
+    }
   },
 };
 </script>
